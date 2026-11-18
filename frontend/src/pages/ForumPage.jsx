@@ -5,9 +5,9 @@ import { formatDistanceToNow } from "../utils/time";
 
 const CAT_CONFIG = {
   warning:  { bg: "#fef2f2", color: "#dc2626", border: "#fecaca",  label: "⚠️ Warning"  },
-  tip:      { bg: "#f0fdf4", color: "#16a34a", border: "#bbf7d0",  label: "💡 Tip"      },
-  question: { bg: "#eff6ff", color: "#2563eb", border: "#bfdbfe",  label: "❓ Question" },
-  general:  { bg: "#f8fafc", color: "#475569", border: "#e2e8f0",  label: "📢 General"  },
+  tip:      { bg: "#edf2e9", color: "#16a34a", border: "#bbf7d0",  label: "💡 Tip"      },
+  question: { bg: "#edf2e9", color: "#55745b", border: "#d0ddcc",  label: "❓ Question" },
+  general:  { bg: "#fafbf8", color: "#59695a", border: "#e5e9e1",  label: "📢 General"  },
 };
 
 export default function ForumPage() {
@@ -20,10 +20,13 @@ export default function ForumPage() {
   const [error, setError]           = useState("");
 
   useEffect(() => {
-    axios.get(`/api/forum?city=${city}`)
-      .then((r) => setPosts(r.data.posts))
-      .finally(() => setLoading(false));
-  }, []);
+    let active = true;
+    axios.get(`/api/forum?city=${encodeURIComponent(city)}`)
+      .then((r) => { if (active) setPosts(r.data.posts || []); })
+      .catch((err) => { if (active) setError(err.response?.data?.message || "Community posts are temporarily unavailable."); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [city]);
 
   async function handlePost(e) {
     e.preventDefault();
@@ -39,23 +42,27 @@ export default function ForumPage() {
   }
 
   async function upvote(id) {
-    const { data } = await axios.patch(`/api/forum/${id}/upvote`);
-    setPosts((prev) => prev.map((p) => p._id === id ? { ...p, upvotes: Array(data.upvotes).fill(null) } : p));
+    try {
+      const { data } = await axios.patch(`/api/forum/${id}/upvote`);
+      setPosts((prev) => prev.map((p) => p._id === id ? { ...p, upvotes: Array(data.upvotes).fill(null) } : p));
+    } catch (err) {
+      setError(err.response?.data?.message || "Could not update this post. Please try again.");
+    }
   }
 
   return (
-    <div style={{ background: "#f8fafc", minHeight: "calc(100vh - 60px)", padding: "40px 20px" }}>
+    <div style={{ background: "#fafbf8", minHeight: "calc(100vh - 60px)", padding: "40px 20px" }}>
       <div className="fade-in" style={{ maxWidth: 640, margin: "0 auto" }}>
 
         {/* Header */}
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 28 }}>
           <div>
             <h1 className="page-title">Community Forum</h1>
-            <p style={{ fontSize: 14, color: "#64748b" }}>
-              <span style={{ color: "#2563eb", fontWeight: 700 }}>📍 {city}</span> — safety tips & warnings
+            <p style={{ fontSize: 14, color: "#738074" }}>
+              <span style={{ color: "#55745b", fontWeight: 700 }}>📍 {city}</span> — safety tips & warnings
             </p>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, background: "#fff", border: "1px solid #e2e8f0", borderRadius: 10, padding: "6px 12px", fontSize: 12, fontWeight: 700, color: "#64748b" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, background: "#fff", border: "1px solid #e5e9e1", borderRadius: 10, padding: "6px 12px", fontSize: 12, fontWeight: 700, color: "#738074" }}>
             <span className="blue-dot" />
             {posts.length} posts
           </div>
@@ -63,7 +70,7 @@ export default function ForumPage() {
 
         {/* Compose */}
         <div className="card" style={{ padding: 22, marginBottom: 24 }}>
-          <h3 style={{ fontSize: 14, fontWeight: 700, color: "#0f172a", marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
+          <h3 style={{ fontSize: 14, fontWeight: 700, color: "#202a22", marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
             <span>✍️</span> Share with your community
           </h3>
           {error && (
@@ -89,15 +96,15 @@ export default function ForumPage() {
                     style={{
                       padding: "5px 11px", borderRadius: 99, fontSize: 11, fontWeight: 700,
                       cursor: "pointer", transition: "all 0.15s", border: "1.5px solid",
-                      borderColor: form.category === cat ? cfg.color : "#e2e8f0",
+                      borderColor: form.category === cat ? cfg.color : "#e5e9e1",
                       background:  form.category === cat ? cfg.bg : "#fff",
-                      color:       form.category === cat ? cfg.color : "#94a3b8",
+                      color:       form.category === cat ? cfg.color : "#98a597",
                     }}>
                     {cfg.label}
                   </button>
                 ))}
               </div>
-              <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#64748b", cursor: "pointer", marginLeft: "auto" }}>
+              <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#738074", cursor: "pointer", marginLeft: "auto" }}>
                 <div className={`toggle-track ${form.isAnonymous ? "on" : ""}`}
                   style={{ width: 34, height: 20 }}
                   onClick={() => setForm({ ...form, isAnonymous: !form.isAnonymous })}>
@@ -115,12 +122,12 @@ export default function ForumPage() {
 
         {/* Posts */}
         {loading ? (
-          <div style={{ textAlign: "center", padding: "48px 0", color: "#94a3b8" }}>
+          <div style={{ textAlign: "center", padding: "48px 0", color: "#98a597" }}>
             <div className="blue-dot" style={{ margin: "0 auto 12px" }} />
             Loading posts…
           </div>
         ) : posts.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "64px 0", color: "#94a3b8" }}>
+          <div style={{ textAlign: "center", padding: "64px 0", color: "#98a597" }}>
             <div style={{ fontSize: 48, marginBottom: 12, opacity: 0.4 }}>💬</div>
             <p style={{ fontWeight: 600, marginBottom: 4 }}>No posts yet</p>
             <p style={{ fontSize: 13 }}>Be the first to share a safety tip!</p>
@@ -136,18 +143,18 @@ export default function ForumPage() {
                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                       <div style={{
                         width: 36, height: 36, borderRadius: 10,
-                        background: post.isAnonymous ? "#f1f5f9" : "linear-gradient(135deg, #dbeafe, #eff6ff)",
+                        background: post.isAnonymous ? "#edf1eb" : "linear-gradient(135deg, #dce7d9, #edf2e9)",
                         display: "flex", alignItems: "center", justifyContent: "center",
-                        fontSize: 14, fontWeight: 800, color: post.isAnonymous ? "#94a3b8" : "#2563eb",
-                        border: "1px solid #e2e8f0",
+                        fontSize: 14, fontWeight: 800, color: post.isAnonymous ? "#98a597" : "#55745b",
+                        border: "1px solid #e5e9e1",
                       }}>
                         {post.isAnonymous ? "?" : post.user?.name?.[0] || "?"}
                       </div>
                       <div>
-                        <p style={{ fontSize: 13, fontWeight: 700, color: "#1e293b" }}>
+                        <p style={{ fontSize: 13, fontWeight: 700, color: "#2b382d" }}>
                           {post.isAnonymous ? "Anonymous" : post.user?.name}
                         </p>
-                        <p style={{ fontSize: 11, color: "#94a3b8", fontFamily: "monospace" }}>
+                        <p style={{ fontSize: 11, color: "#98a597", fontFamily: "monospace" }}>
                           {formatDistanceToNow(post.createdAt)}
                         </p>
                       </div>
@@ -160,18 +167,18 @@ export default function ForumPage() {
                       {cfg.label}
                     </span>
                   </div>
-                  <p style={{ fontSize: 13, color: "#334155", lineHeight: 1.6 }}>{post.content}</p>
-                  <div style={{ marginTop: 14, paddingTop: 12, borderTop: "1px solid #f1f5f9", display: "flex", alignItems: "center", gap: 8 }}>
+                  <p style={{ fontSize: 13, color: "#435345", lineHeight: 1.6 }}>{post.content}</p>
+                  <div style={{ marginTop: 14, paddingTop: 12, borderTop: "1px solid #edf1eb", display: "flex", alignItems: "center", gap: 8 }}>
                     <button onClick={() => upvote(post._id)}
                       style={{
-                        background: "#f8fafc", border: "1px solid #e2e8f0",
+                        background: "#fafbf8", border: "1px solid #e5e9e1",
                         borderRadius: 8, padding: "4px 12px",
-                        fontSize: 12, fontWeight: 600, color: "#64748b",
+                        fontSize: 12, fontWeight: 600, color: "#738074",
                         cursor: "pointer", transition: "all 0.15s",
                         display: "flex", alignItems: "center", gap: 5,
                       }}
-                      onMouseEnter={e => { e.currentTarget.style.background = "#eff6ff"; e.currentTarget.style.borderColor = "#bfdbfe"; e.currentTarget.style.color = "#2563eb"; }}
-                      onMouseLeave={e => { e.currentTarget.style.background = "#f8fafc"; e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.color = "#64748b"; }}
+                      onMouseEnter={e => { e.currentTarget.style.background = "#edf2e9"; e.currentTarget.style.borderColor = "#d0ddcc"; e.currentTarget.style.color = "#55745b"; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = "#fafbf8"; e.currentTarget.style.borderColor = "#e5e9e1"; e.currentTarget.style.color = "#738074"; }}
                     >
                       👍 {post.upvotes?.length || 0} helpful
                     </button>
