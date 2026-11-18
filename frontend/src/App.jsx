@@ -11,13 +11,13 @@ import ProfilePage from "./pages/ProfilePage";
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
-  if (loading) return <div className="flex items-center justify-center h-screen text-gray-400">Loading...</div>;
-  return user ? children : <Navigate to="/login" />;
+  if (loading) return <div className="app-loading"><span className="loader" />Preparing your safe space…</div>;
+  return user ? children : <Navigate to="/login" replace />;
 }
 
 function AppRoutes() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="app-shell">
       <Navbar />
       <Routes>
         <Route path="/" element={<MapPage />} />
@@ -27,17 +27,12 @@ function AppRoutes() {
         <Route path="/report" element={<PrivateRoute><ReportPage /></PrivateRoute>} />
         <Route path="/forum" element={<PrivateRoute><ForumPage /></PrivateRoute>} />
         <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>
   );
 }
 
 export default function App() {
-  return (
-    <AuthProvider>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
-    </AuthProvider>
-  );
+  return <AuthProvider><BrowserRouter><AppRoutes /></BrowserRouter></AuthProvider>;
 }
