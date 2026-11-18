@@ -2,6 +2,8 @@ const Report = require("../models/Report");
 const SafetyZone = require("../models/SafetyZone");
 const { emitToCity } = require("../config/socket");
 
+const CATEGORIES = new Set(["harassment", "theft", "assault", "suspicious", "other"]);
+
 function getSafetyScore(category, description) {
   const scores = {
     assault: 15,
@@ -11,65 +13,96 @@ function getSafetyScore(category, description) {
     other: 60,
   };
 
-  let score = scores[category] || 50;
+  let score = scores[category] ?? 50;
+  const text = String(description || "").toLowerCase();
+  const dangerous = ["weapon", "knife", "gun", "blood", "gang"];
+  const mild = ["minor", "left quickly", "no harm"];
 
-  if (description) {
-    const text = description.toLowerCase();
-    const dangerous = ["weapon", "knife", "gun", "blood", "gang"];
-    const mild = ["minor", "left quickly", "no harm"];
-    dangerous.forEach((w) => {
-      if (text.includes(w)) score = Math.max(0, score - 15);
-    });
-    mild.forEach((w) => {
-      if (text.includes(w)) score = Math.min(100, score + 10);
-    });
-  }
+  dangerous.forEach((word) => {
+    if (text.includes(word)) score = Math.max(0, score - 15);
+  });
+  mild.forEach((word) => {
+    if (text.includes(word)) score = Math.min(100, score + 10);
+  });
 
   return score;
 }
 
 async function createReport(req, res) {
   try {
-    const { category, description, coordinates, address, city, isAnonymous } =
-      req.body;
+    const {
+      category,
+      description = "",
+      coordinates,
+      address = "",
+      city,
+      isAnonymous = false,
+    } = req.body;
 
-    if (!coordinates || coordinates.length !== 2) {
-      return res
-        .status(400)
-        .json({ message: "coordinates [lng, lat] are required" });
+    if (!CATEGORIES.has(category)) {
+      return res.status(400).json({ message: "Choose a valid report category." });
     }
 
-    const safetyScore = getSafetyScore(category, description);
-    const severity =
-      safetyScore < 30 ? "high" : safetyScore < 60 ? "medium" : "low";
+    if (
+      !Array.isArray(coordinates) ||
+      coordinates.length !== 2 ||
+      !coordinates.every(Number.isFinite)
+    ) {
+      return res.status(400).json({
+        message: "Location must contain longitude and latitude coordinates.",
+      });
+    }
+
+    const [longitude, latitude] = coordinates;
+    if (longitude < -180 || longitude > 180 || latitude < -90 || latitude > 90) {
+      return res.status(400).json({ message: "The selected location is invalid." });
+    }
+
+    const cleanDescription = String(description).trim();
+    if (cleanDescription.length > 500) {
+      return res.status(400).json({ message: "Description must be 500 characters or fewer." });
+    }
+
+    const resolvedCity = String(city || req.user?.city || "Chennai").trim();
+    const safetyScore = getSafetyScore(category, cleanDescription);
+    const severity = safetyScore < 30 ? "high" : safetyScore < 60 ? "medium" : "low";
 
     const report = await Report.create({
       user: isAnonymous ? null : req.user?._id,
-      isAnonymous: isAnonymous || false,
+      isAnonymous: Boolean(isAnonymous),
       category,
-      description,
-      location: { type: "Point", coordinates },
-      address,
-      city: city || req.user?.city || "Chennai",
+      description: cleanDescription,
+      location: { type: "Point", coordinates: [longitude, latitude] },
+      address: String(address).trim(),
+      city: resolvedCity,
       severity,
       safetyScore,
     });
 
-    await updateNearestZone(coordinates, city);
+    // A zone-score refresh should never make a successfully saved report look like a failed submission.
+    try {
+      await updateNearestZone([longitude, latitude], resolvedCity);
+    } catch (zoneError) {
+      console.error("Safety-zone refresh failed:", zoneError.message);
+    }
 
-    emitToCity(city, "newReport", {
-      id: report._id,
+    // Match the same shape returned by GET /api/reports so the live map can add the marker.
+    emitToCity(resolvedCity, "newReport", {
+      _id: String(report._id),
       category: report.category,
-      severity: report.severity,
-      coordinates: report.location.coordinates,
+      description: report.description,
+      location: report.location,
       address: report.address,
-      safetyScore,
+      city: report.city,
+      severity: report.severity,
+      safetyScore: report.safetyScore,
       createdAt: report.createdAt,
     });
 
-    res.status(201).json({ report });
+    return res.status(201).json({ report });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Create report failed:", err.message);
+    return res.status(500).json({ message: "Unable to submit the report right now." });
   }
 }
 
@@ -87,7 +120,6 @@ async function updateNearestZone(coordinates, city) {
   if (!zone) return;
 
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-
   const nearbyReports = await Report.find({
     city,
     status: "active",
@@ -103,19 +135,11 @@ async function updateNearestZone(coordinates, city) {
     },
   });
 
-  if (nearbyReports.length === 0) return;
+  if (!nearbyReports.length) return;
 
-  const avg =
-    nearbyReports.reduce((sum, r) => sum + r.safetyScore, 0) /
-    nearbyReports.length;
-
-  zone.safetyScore = Math.round(avg);
-  zone.riskLevel =
-    zone.safetyScore >= 61
-      ? "safe"
-      : zone.safetyScore >= 31
-      ? "moderate"
-      : "unsafe";
+  const average = nearbyReports.reduce((sum, report) => sum + report.safetyScore, 0) / nearbyReports.length;
+  zone.safetyScore = Math.round(average);
+  zone.riskLevel = zone.safetyScore >= 61 ? "safe" : zone.safetyScore >= 31 ? "moderate" : "unsafe";
   zone.incidentCount = nearbyReports.length;
 
   await zone.save();
@@ -126,16 +150,17 @@ async function getReports(req, res) {
     const { city, category } = req.query;
     const filter = { status: "active" };
     if (city) filter.city = city;
-    if (category) filter.category = category;
+    if (category && CATEGORIES.has(category)) filter.category = category;
 
     const reports = await Report.find(filter)
       .select("-user")
       .sort({ createdAt: -1 })
       .limit(100);
 
-    res.json({ reports });
+    return res.json({ reports });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Get reports failed:", err.message);
+    return res.status(500).json({ message: "Unable to load reports right now." });
   }
 }
 
@@ -144,17 +169,15 @@ async function upvoteReport(req, res) {
     const report = await Report.findById(req.params.id);
     if (!report) return res.status(404).json({ message: "Report not found" });
 
-    const already = report.upvotes.includes(req.user._id);
-    if (already) {
-      report.upvotes.pull(req.user._id);
-    } else {
-      report.upvotes.push(req.user._id);
-    }
+    const alreadyUpvoted = report.upvotes.some((id) => id.equals(req.user._id));
+    if (alreadyUpvoted) report.upvotes.pull(req.user._id);
+    else report.upvotes.push(req.user._id);
 
     await report.save();
-    res.json({ upvotes: report.upvotes.length });
+    return res.json({ upvotes: report.upvotes.length });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Upvote report failed:", err.message);
+    return res.status(500).json({ message: "Unable to update this report right now." });
   }
 }
 
