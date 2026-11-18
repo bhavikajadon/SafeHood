@@ -209,3 +209,7 @@ a{color:inherit}
 .emergency-disclaimer{border-top:1px solid #e5e9e1;padding:17px 0 0;font-size:9px;line-height:1.6;color:#9aa497}
 @media(max-width:760px){.emergency-page{padding:18px 14px}.emergency-hero{grid-template-columns:1fr;padding:30px 23px 18px}.emergency-hero h1{font-size:43px}.emergency-hero-art{min-height:190px;transform:scale(.83);margin-top:-5px}.helpline-grid{gap:8px}.helpline-card{padding:11px;gap:8px}.helpline-content small{display:none}.helpline-number{font-size:15px}.share-location-card{align-items:flex-start;flex-wrap:wrap;padding:17px}.share-location-button{margin-left:60px}.emergency-section{padding-top:28px}}
 @media(max-width:480px){.emergency-heading h2{font-size:22px}.helpline-grid,.safety-tips-grid{grid-template-columns:1fr}.helpline-content small{display:block}.helpline-card{padding:13px}.share-location-button{margin-left:0;width:100%}.emergency-primary-call{margin-top:15px}}
+
+.map-toolbar-actions{display:flex;align-items:center;gap:8px;pointer-events:none}
+.demo-data-pill{pointer-events:none;background:#fff8ed;border:1px solid #eed9ba;color:#957044;padding:8px 10px;border-radius:9px;font-size:9px;font-weight:700;white-space:nowrap;box-shadow:0 4px 15px #30442c12}
+@media(max-width:680px){.map-toolbar-actions{align-self:flex-end}.demo-data-pill{padding:7px 9px;font-size:8px}}
