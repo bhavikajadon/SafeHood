@@ -5,17 +5,22 @@ async function protect(req, res, next) {
   const header = req.headers.authorization;
 
   if (!header || !header.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "Not logged in" });
+    return res.status(401).json({ message: "Please sign in to continue." });
   }
 
-  const token = header.split(" ")[1];
-
   try {
+    const token = header.slice("Bearer ".length);
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = await User.findById(decoded.id).select("-password");
-    next();
+    const user = await User.findById(decoded.id).select("-password");
+
+    if (!user) {
+      return res.status(401).json({ message: "Your account is no longer available. Please sign in again." });
+    }
+
+    req.user = user;
+    return next();
   } catch {
-    res.status(401).json({ message: "Invalid or expired token" });
+    return res.status(401).json({ message: "Your session has expired. Please sign in again." });
   }
 }
 
