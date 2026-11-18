@@ -43,7 +43,7 @@ export default function MapPage() {
         <div className="map-heading-right"><span className="city-pill"><span>⌖</span>{city}</span><span className="map-live"><span className="green-mini-dot"/> Live updates</span></div>
       </div>
       <div className="map-frame"><SafetyMap city={city}/></div>
-      <div className="map-disclaimer">Safety information is community-reported and may be incomplete. Use your judgement and contact local emergency services when needed.</div>
+      <div className="map-disclaimer">Map items may include illustrative demo fixtures and community-submitted reports. Scores are not official safety ratings or guarantees. Verify information independently and contact local emergency services when needed.</div>
     </section>
 
     {showIntro && <section className="community-banner">
