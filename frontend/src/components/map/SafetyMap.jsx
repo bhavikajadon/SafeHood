@@ -42,12 +42,13 @@ export default function SafetyMap({ city="Chennai" }) {
 
   const filtered=filter==="all"?reports:reports.filter(r=>r.category===filter);
   const visibleZones=zones.filter(z=>z.location?.coordinates);
+  const hasDemoData=visibleZones.some(zone=>zone.isDemoData)||filtered.some(report=>report.isDemoData);
   const categories=["all","harassment","theft","assault","suspicious"];
 
   return <div className="safety-map-shell">
     <div className="map-toolbar">
       <div className="map-filters"><span className="filter-label">SHOW</span>{categories.map(cat=><button key={cat} onClick={()=>setFilter(cat)} className={filter===cat?"filter-chip selected":"filter-chip"}>{cat==="all"?"All reports":cat}</button>)}</div>
-      <button className="locate-button" onClick={locateMe}><span>⌖</span> Locate me</button>
+      <div className="map-toolbar-actions">{hasDemoData&&<span className="demo-data-pill">Illustrative demo data</span>}<button className="locate-button" onClick={locateMe}><span>⌖</span> Locate me</button></div>
     </div>
     {mapError&&<div className="map-status" role="status">{mapError}<button onClick={()=>setMapError("")} aria-label="Dismiss">×</button></div>}
     {liveAlerts.length>0&&<div className="live-alert-stack">{liveAlerts.map((item,i)=><div key={item._id||i} className="live-alert"><span className="live-dot"/><span>New {item.category||"safety"} report received</span></div>)}</div>}
@@ -55,8 +56,8 @@ export default function SafetyMap({ city="Chennai" }) {
       <MapContainer center={[13.0827,80.2707]} zoom={12} scrollWheelZoom style={{width:"100%",height:"100%"}}>
         <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
         {userLocation&&<FlyTo coords={userLocation}/>}
-        {visibleZones.map((zone,i)=>{const [lng,lat]=zone.location.coordinates;return lat&&lng?<CircleMarker key={zone._id||i} center={[lat,lng]} radius={Math.min(22,Math.max(9,zone.radius?zone.radius/30:14))} pathOptions={{color:zone.safetyScore>=61?"#658b70":zone.safetyScore>=31?"#c69a52":"#bd625d",fillOpacity:.2,weight:2}}><Popup><strong>{zone.name||"Safety zone"}</strong><br/>Community safety signal</Popup></CircleMarker>:null;})}
-        {filtered.map((report,i)=>{if(!report.location?.coordinates)return null;const[lng,lat]=report.location.coordinates;if(!lat||!lng)return null;return <CircleMarker key={report._id||i} center={[lat,lng]} radius={7} pathOptions={{color:CATEGORY_COLORS[report.category]||CATEGORY_COLORS.other,fillColor:CATEGORY_COLORS[report.category]||CATEGORY_COLORS.other,fillOpacity:.82,weight:2}}><Popup><strong>{report.category||"Community report"}</strong><br/>{report.description||report.title||"A safety observation was shared here."}</Popup></CircleMarker>;})}
+        {visibleZones.map((zone,i)=>{const [lng,lat]=zone.location.coordinates;return lat&&lng?<CircleMarker key={zone._id||i} center={[lat,lng]} radius={Math.min(22,Math.max(9,zone.radius?zone.radius/30:14))} pathOptions={{color:zone.safetyScore>=61?"#658b70":zone.safetyScore>=31?"#c69a52":"#bd625d",fillOpacity:.2,weight:2}}><Popup><strong>{zone.name||"Safety zone"}</strong><br/>{zone.isDemoData?"Illustrative sample zone · not verified":"Community safety signal"}<br/>Score: {zone.safetyScore ?? "Not rated"}/100</Popup></CircleMarker>:null;})}
+        {filtered.map((report,i)=>{if(!report.location?.coordinates)return null;const[lng,lat]=report.location.coordinates;if(!lat||!lng)return null;return <CircleMarker key={report._id||i} center={[lat,lng]} radius={7} pathOptions={{color:CATEGORY_COLORS[report.category]||CATEGORY_COLORS.other,fillColor:CATEGORY_COLORS[report.category]||CATEGORY_COLORS.other,fillOpacity:.82,weight:2}}><Popup><strong>{report.category||"Community report"}</strong><br/>{report.description||report.title||"A safety observation was shared here."}<br/>{report.isDemoData?"Illustrative sample report · not verified":"Community-submitted report"}</Popup></CircleMarker>;})}
       </MapContainer>
     </div>
     <div className="map-legend"><span className="legend-title">MAP KEY</span><span><i className="legend-dot safe"/> Safer signals</span><span><i className="legend-dot moderate"/> Caution</span><span><i className="legend-dot risk"/> Reports</span><span className="legend-count">{filtered.length} report{filtered.length===1?"":"s"}</span></div>
