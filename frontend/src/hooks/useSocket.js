@@ -10,10 +10,12 @@ export function useSocket(city, onNewReport) {
   useEffect(() => {
     if (!city) return;
     if (!socket) {
-      socket = io({ path: "/socket.io" });
+      const socketUrl = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_BASE_URL || undefined;
+      socket = io(socketUrl, { path: "/socket.io", transports: ["websocket", "polling"] });
     }
     socket.emit("joinCity", city);
-    socket.on("newReport", (data) => callbackRef.current?.(data));
-    return () => socket.off("newReport");
+    const handleNewReport = (data) => callbackRef.current?.(data);
+    socket.on("newReport", handleNewReport);
+    return () => socket?.off("newReport", handleNewReport);
   }, [city]);
 }
