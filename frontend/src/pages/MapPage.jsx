@@ -39,7 +39,7 @@ export default function MapPage() {
 
     <section className="map-section">
       <div className="section-heading">
-        <div><div className="eyebrow muted-eyebrow">YOUR LOCAL PICTURE</div><h2>Explore your area<span className="heading-period">.</span></h2><p>Community-submitted reports and safety signals in one place.</p></div>
+        <div><div className="eyebrow muted-eyebrow">YOUR LOCAL PICTURE</div><h2>Explore your area<span className="heading-period">.</span></h2><p>Community-submitted reports and clearly labelled illustrative map fixtures.</p></div>
         <div className="map-heading-right"><span className="city-pill"><span>⌖</span>{city}</span><span className="map-live"><span className="green-mini-dot"/> Live updates</span></div>
       </div>
       <div className="map-frame"><SafetyMap city={city}/></div>
