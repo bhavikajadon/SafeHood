@@ -36,6 +36,11 @@ const zoneSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    // True only for illustrative fixtures created by the seed script.
+    isDemoData: {
+      type: Boolean,
+      default: false,
+    },
     policeStation: {
       name: String,
       phone: String,
