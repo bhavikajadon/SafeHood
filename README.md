@@ -1,102 +1,74 @@
 # SafeHood
 
-AI-Powered Community Safety Platform
+**Community safety, made visible.**
 
-SafeHood is a data-driven platform designed to improve urban safety awareness by aggregating public safety signals and visualizing them through an interactive city safety map.
+SafeHood is a community-centred urban safety platform designed to bring neighbourhood safety signals into one clear view. It helps residents, students and people navigating unfamiliar places make more informed decisions.
 
-The system analyzes multiple real-time information sources and converts them into accessible safety insights to help individuals make informed decisions about their surroundings.
+## What it does
 
-SafeHood is designed for residents, travelers, students, and individuals navigating unfamiliar environments.
+- **Interactive safety map** — explore reported incidents and safety-zone signals on a city map.
+- **Community reporting** — authenticated users can share local safety observations.
+- **Live updates** — Socket.IO delivers newly submitted reports to connected map sessions.
+- **Community forum** — share warnings, tips and questions with neighbours.
+- **Emergency resources** — quick access to key India emergency helplines and location sharing.
 
----
+Safety information is community-reported and may be incomplete. SafeHood is an awareness tool, not a guarantee of safety or a replacement for emergency services.
 
-## Problem
+## Technology
 
-Urban safety information is often fragmented across different platforms and data sources. As a result, individuals frequently lack access to timely and contextual information about safety conditions in specific locations.
+- Frontend: React 19, Vite, React Router, React Leaflet, Leaflet
+- Backend: Node.js, Express, MongoDB / Mongoose, Socket.IO
+- Authentication: JWT
+- Map tiles: OpenStreetMap
 
-Common challenges include:
+## Project structure
 
-- Limited awareness of high-risk areas  
-- Lack of real-time safety insights  
-- Difficulty accessing emergency resources quickly  
+```
+.
+├── frontend/   # React + Vite application
+├── backend/    # Express API and Socket.IO server
+└── vercel.json # Vercel frontend build and SPA routing
+```
 
-SafeHood addresses this problem by transforming distributed safety signals into a unified, user-friendly safety intelligence platform.
-
----
-
-## Core Capabilities
-
-### Interactive Safety Visualization
-The platform provides an interactive map interface that visualizes safety insights across different areas of a city, allowing users to better understand potential risk patterns.
-
-### Community Incident Reporting
-Users can contribute safety observations and incident reports, enabling the system to continuously improve its understanding of local safety conditions.
-
-### Real-Time Safety Signals
-The platform integrates safety signals from public data sources to provide updates about emerging safety risks.
-
-### Emergency Assistance Tools
-SafeHood includes integrated access to nearby emergency services and essential safety resources.
-
----
-
-## Technology Stack
+## Run locally
 
 ### Frontend
-- React  
-- TailwindCSS  
-- Map Visualization Libraries  
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The Vite dev server proxies `/api` and `/socket.io` to `http://localhost:5000`.
 
 ### Backend
-- Node.js  
-- Express.js  
-- MongoDB  
 
-### AI and Data Processing
-- Python-based services  
-- Natural Language Processing models  
-- Data aggregation pipelines  
+```bash
+cd backend
+npm install
+```
 
----
+Configure the backend environment (MongoDB connection string and JWT secret), then run:
 
-## System Overview
+```bash
+npm run dev
+```
 
-The platform integrates multiple layers including user interfaces, backend APIs, data pipelines, and machine learning services to process and visualize safety signals.
+## Deploy the frontend to Vercel
 
-Certain components of the system architecture and analytical models are proprietary and therefore not publicly disclosed in this repository.
+1. Import this GitHub repository into Vercel.
+2. Set the project root to the repository root (not the `frontend` subfolder).
+3. The root `vercel.json` installs frontend dependencies, runs the Vite production build and publishes `frontend/dist`. It also rewrites client-side routes to `index.html`.
+4. In Vercel project settings, add:
+   - `VITE_API_BASE_URL` — the origin of your deployed Express API, for example `https://your-api.example.com`.
+   - `VITE_SOCKET_URL` — the Socket.IO server origin. It can be the same as `VITE_API_BASE_URL`.
+5. Deploy again after setting environment variables.
 
----
+### Important backend note
 
-## Research and Development Focus
+Vercel configuration here deploys the React frontend only. The Express API, MongoDB database and Socket.IO server need to be deployed and configured separately on a host that supports the backend's runtime and persistent Socket.IO connections. Set the backend's `CLIENT_URL` to the deployed Vercel site origin and configure its MongoDB connection string and JWT secret. The local Vite proxy is for development only; it is not used in production.
 
-SafeHood explores the use of:
+## Status
 
-- Public safety data aggregation  
-- Natural language processing for incident detection  
-- Location-based risk analysis  
-- Community-driven safety intelligence  
-
----
-
-## Future Development
-
-Planned improvements include:
-
-- Advanced predictive risk modeling  
-- Expanded city coverage  
-- Mobile application support  
-- Enhanced real-time alert systems  
-
----
-
-## Project Status
-
-SafeHood is currently under active development as part of an ongoing research and engineering effort focused on urban safety technology.
-
----
-
-## License
-
-This repository contains a portfolio implementation of the SafeHood platform.
-
-Certain features, algorithms, and infrastructure components are proprietary and are not included in the public version of this repository.
+SafeHood is an actively developed portfolio implementation. Some data ingestion, analytical and predictive components described in the broader concept are planned or research-stage capabilities and should not be interpreted as production guarantees.
