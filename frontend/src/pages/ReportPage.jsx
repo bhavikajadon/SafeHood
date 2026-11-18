@@ -8,7 +8,7 @@ const CATEGORIES = [
   { value: "theft",      label: "Theft / Robbery",     emoji: "🔓",  desc: "Chain snatching, pickpocketing",       accent: "#eab308", bg: "#fefce8" },
   { value: "assault",    label: "Assault",             emoji: "🚨",  desc: "Physical violence or attack",          accent: "#ef4444", bg: "#fef2f2" },
   { value: "suspicious", label: "Suspicious Activity", emoji: "👁️", desc: "Unusual or threatening behaviour",     accent: "#8b5cf6", bg: "#faf5ff" },
-  { value: "other",      label: "Other Safety Issue",  emoji: "📍",  desc: "Unsafe roads, lighting, etc.",         accent: "#64748b", bg: "#f8fafc" },
+  { value: "other",      label: "Other Safety Issue",  emoji: "📍",  desc: "Unsafe roads, lighting, etc.",         accent: "#738074", bg: "#fafbf8" },
 ];
 
 export default function ReportPage() {
@@ -26,6 +26,8 @@ export default function ReportPage() {
   const [error, setError]           = useState("");
 
   function getLocation() {
+    if (!navigator.geolocation) { setError("Location services are not available in this browser."); return; }
+    setError("");
     setLocLoading(true);
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
@@ -48,11 +50,11 @@ export default function ReportPage() {
   }
 
   if (done) return (
-    <div style={{ minHeight: "calc(100vh - 60px)", display: "flex", alignItems: "center", justifyContent: "center", background: "#f8fafc" }}>
+    <div style={{ minHeight: "calc(100vh - 60px)", display: "flex", alignItems: "center", justifyContent: "center", background: "#fafbf8" }}>
       <div className="fade-in" style={{ textAlign: "center", maxWidth: 360, padding: 20 }}>
         <div style={{ fontSize: 64, marginBottom: 20, filter: "drop-shadow(0 4px 12px rgba(16,185,129,0.3))" }}>✅</div>
-        <h2 style={{ fontSize: 24, fontWeight: 800, color: "#0f172a", marginBottom: 8 }}>Report Submitted!</h2>
-        <p style={{ fontSize: 14, color: "#64748b", marginBottom: 28 }}>Thank you for helping keep your community safe.</p>
+        <h2 style={{ fontSize: 24, fontWeight: 800, color: "#202a22", marginBottom: 8 }}>Report Submitted!</h2>
+        <p style={{ fontSize: 14, color: "#738074", marginBottom: 28 }}>Thank you for helping keep your community safe.</p>
         <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
           <button onClick={() => navigate("/")} className="btn-primary">View on Map</button>
           <button onClick={() => { setDone(false); setStep(1); setForm({ ...form, category: "", description: "", coordinates: null }); }} className="btn-secondary">
@@ -66,7 +68,7 @@ export default function ReportPage() {
   const selCat = CATEGORIES.find(c => c.value === form.category);
 
   return (
-    <div style={{ minHeight: "calc(100vh - 60px)", background: "#f8fafc", padding: "40px 20px" }}>
+    <div style={{ minHeight: "calc(100vh - 60px)", background: "#fafbf8", padding: "40px 20px" }}>
       <div className="fade-in" style={{ maxWidth: 540, margin: "0 auto" }}>
 
         <h1 className="page-title">Report an Incident</h1>
@@ -85,21 +87,21 @@ export default function ReportPage() {
                     width: 32, height: 32, borderRadius: "50%",
                     display: "flex", alignItems: "center", justifyContent: "center",
                     fontSize: 12, fontWeight: 700,
-                    background: isDone ? "#10b981" : isActive ? "#2563eb" : "#e2e8f0",
-                    color:      (isDone || isActive) ? "#fff" : "#94a3b8",
+                    background: isDone ? "#628267" : isActive ? "#55745b" : "#e5e9e1",
+                    color:      (isDone || isActive) ? "#fff" : "#98a597",
                     boxShadow:  isActive ? "0 0 0 4px rgba(37,99,235,0.15)" : "none",
                     transition: "all 0.3s",
                   }}>
                     {isDone ? "✓" : s}
                   </div>
-                  <span style={{ fontSize: 11, fontWeight: isActive ? 700 : 500, color: isActive ? "#1e293b" : "#94a3b8", whiteSpace: "nowrap" }}>
+                  <span style={{ fontSize: 11, fontWeight: isActive ? 700 : 500, color: isActive ? "#2b382d" : "#98a597", whiteSpace: "nowrap" }}>
                     {label}
                   </span>
                 </div>
                 {s < 3 && (
                   <div style={{
                     flex: 1, height: 2, margin: "0 8px", marginBottom: 20,
-                    background: isDone ? "#10b981" : "#e2e8f0",
+                    background: isDone ? "#628267" : "#e5e9e1",
                     transition: "background 0.3s",
                   }} />
                 )}
@@ -118,28 +120,28 @@ export default function ReportPage() {
           {/* Step 1 */}
           {step === 1 && (
             <div className="slide-up">
-              <h2 style={{ fontSize: 17, fontWeight: 700, color: "#0f172a", marginBottom: 18 }}>What type of incident?</h2>
+              <h2 style={{ fontSize: 17, fontWeight: 700, color: "#202a22", marginBottom: 18 }}>What type of incident?</h2>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {CATEGORIES.map((cat) => (
                   <button key={cat.value}
                     onClick={() => { setForm({ ...form, category: cat.value }); setStep(2); }}
                     style={{
                       display: "flex", alignItems: "center", gap: 14,
-                      padding: "14px 16px", borderRadius: 12, border: "1.5px solid #e2e8f0",
+                      padding: "14px 16px", borderRadius: 12, border: "1.5px solid #e5e9e1",
                       background: "#fff", cursor: "pointer", textAlign: "left",
                       transition: "all 0.15s",
                     }}
                     onMouseEnter={e => { e.currentTarget.style.borderColor = cat.accent; e.currentTarget.style.background = cat.bg; }}
-                    onMouseLeave={e => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.background = "#fff"; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = "#e5e9e1"; e.currentTarget.style.background = "#fff"; }}
                   >
                     <div style={{ width: 44, height: 44, borderRadius: 12, background: cat.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0, border: `1px solid ${cat.accent}20` }}>
                       {cat.emoji}
                     </div>
                     <div style={{ flex: 1 }}>
-                      <p style={{ fontSize: 14, fontWeight: 700, color: "#1e293b", marginBottom: 2 }}>{cat.label}</p>
-                      <p style={{ fontSize: 12, color: "#94a3b8" }}>{cat.desc}</p>
+                      <p style={{ fontSize: 14, fontWeight: 700, color: "#2b382d", marginBottom: 2 }}>{cat.label}</p>
+                      <p style={{ fontSize: 12, color: "#98a597" }}>{cat.desc}</p>
                     </div>
-                    <span style={{ color: "#cbd5e1", fontSize: 16 }}>›</span>
+                    <span style={{ color: "#cbd8c7", fontSize: 16 }}>›</span>
                   </button>
                 ))}
               </div>
@@ -149,13 +151,13 @@ export default function ReportPage() {
           {/* Step 2 */}
           {step === 2 && (
             <div className="slide-up">
-              <h2 style={{ fontSize: 17, fontWeight: 700, color: "#0f172a", marginBottom: 20 }}>Where did it happen?</h2>
+              <h2 style={{ fontSize: 17, fontWeight: 700, color: "#202a22", marginBottom: 20 }}>Where did it happen?</h2>
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                 <button onClick={getLocation} disabled={locLoading} style={{
                   padding: "14px 16px", borderRadius: 12, cursor: "pointer",
-                  border: form.coordinates ? "1.5px solid #10b981" : "1.5px dashed #93c5fd",
-                  background: form.coordinates ? "#f0fdf4" : "#eff6ff",
-                  color: form.coordinates ? "#065f46" : "#1d4ed8",
+                  border: form.coordinates ? "1.5px solid #628267" : "1.5px dashed #aac0a7",
+                  background: form.coordinates ? "#edf2e9" : "#edf2e9",
+                  color: form.coordinates ? "#065f46" : "#395640",
                   fontWeight: 600, fontSize: 14, transition: "all 0.2s",
                   display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
                 }}>
@@ -184,8 +186,8 @@ export default function ReportPage() {
                     <div className="toggle-thumb" />
                   </div>
                   <div>
-                    <p style={{ fontSize: 13, fontWeight: 600, color: "#334155" }}>Submit anonymously</p>
-                    <p style={{ fontSize: 11, color: "#94a3b8" }}>Your name won't appear on the map</p>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: "#435345" }}>Submit anonymously</p>
+                    <p style={{ fontSize: 11, color: "#98a597" }}>Your name won't appear on the map</p>
                   </div>
                 </label>
 
@@ -203,16 +205,16 @@ export default function ReportPage() {
           {/* Step 3 */}
           {step === 3 && (
             <div className="slide-up">
-              <h2 style={{ fontSize: 17, fontWeight: 700, color: "#0f172a", marginBottom: 20 }}>Confirm your report</h2>
-              <div style={{ background: "#f8fafc", borderRadius: 12, padding: "16px 18px", marginBottom: 18, border: "1px solid #e2e8f0" }}>
+              <h2 style={{ fontSize: 17, fontWeight: 700, color: "#202a22", marginBottom: 20 }}>Confirm your report</h2>
+              <div style={{ background: "#fafbf8", borderRadius: 12, padding: "16px 18px", marginBottom: 18, border: "1px solid #e5e9e1" }}>
                 {selCat && (
-                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14, paddingBottom: 14, borderBottom: "1px solid #e2e8f0" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14, paddingBottom: 14, borderBottom: "1px solid #e5e9e1" }}>
                     <div style={{ width: 40, height: 40, borderRadius: 10, background: selCat.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, border: `1px solid ${selCat.accent}20` }}>
                       {selCat.emoji}
                     </div>
                     <div>
-                      <p style={{ fontWeight: 700, fontSize: 14, color: "#1e293b" }}>{selCat.label}</p>
-                      <p style={{ fontSize: 11, color: "#94a3b8" }}>Incident category</p>
+                      <p style={{ fontWeight: 700, fontSize: 14, color: "#2b382d" }}>{selCat.label}</p>
+                      <p style={{ fontSize: 11, color: "#98a597" }}>Incident category</p>
                     </div>
                   </div>
                 )}
@@ -221,14 +223,14 @@ export default function ReportPage() {
                   ["👤 Anonymous", form.isAnonymous ? "Yes — name hidden" : "No — name visible"],
                 ].map(([k, v]) => (
                   <div key={k} style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 10 }}>
-                    <span style={{ color: "#64748b" }}>{k}</span>
-                    <span style={{ fontWeight: 600, color: "#1e293b" }}>{v}</span>
+                    <span style={{ color: "#738074" }}>{k}</span>
+                    <span style={{ fontWeight: 600, color: "#2b382d" }}>{v}</span>
                   </div>
                 ))}
                 {form.description && (
-                  <div style={{ borderTop: "1px solid #e2e8f0", paddingTop: 12, marginTop: 4 }}>
-                    <p style={{ fontSize: 11, color: "#94a3b8", marginBottom: 4 }}>Description</p>
-                    <p style={{ fontSize: 13, color: "#334155", lineHeight: 1.5 }}>{form.description}</p>
+                  <div style={{ borderTop: "1px solid #e5e9e1", paddingTop: 12, marginTop: 4 }}>
+                    <p style={{ fontSize: 11, color: "#98a597", marginBottom: 4 }}>Description</p>
+                    <p style={{ fontSize: 13, color: "#435345", lineHeight: 1.5 }}>{form.description}</p>
                   </div>
                 )}
               </div>
