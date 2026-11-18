@@ -58,7 +58,7 @@ async function upvotePost(req, res) {
     const post = await ForumPost.findById(req.params.id);
     if (!post) return res.status(404).json({ message: "Post not found" });
 
-    const already = post.upvotes.includes(req.user._id);
+    const already = post.upvotes.some((id) => id.equals(req.user._id));
     if (already) {
       post.upvotes.pull(req.user._id);
     } else {
