@@ -1,4 +1,5 @@
 require("dotenv").config();
+
 const mongoose = require("mongoose");
 const SafetyZone = require("./models/SafetyZone");
 const Report = require("./models/Report");
@@ -32,56 +33,58 @@ const REPORTS = [
 ];
 
 async function seed() {
+  if (!process.env.MONGO_URI) throw new Error("MONGO_URI is required.");
+
   try {
     await mongoose.connect(process.env.MONGO_URI);
-    console.log("✅ Connected to MongoDB");
+    console.log("Connected to MongoDB");
 
-    await SafetyZone.deleteMany({});
-    await Report.deleteMany({});
-    console.log("🗑️  Cleared old data");
+    // Upsert demo fixtures: running this again will not wipe user-submitted data.
+    for (const zone of ZONES) {
+      await SafetyZone.updateOne(
+        { city: "Chennai", name: zone.name },
+        {
+          $set: {
+            name: zone.name,
+            city: "Chennai",
+            location: { type: "Point", coordinates: zone.coordinates },
+            safetyScore: zone.score,
+            riskLevel: zone.risk,
+            incidentCount: 0,
+            policeStation: { name: `${zone.name} Police Station`, phone: "100", distance: "0.8 km" },
+            hospital: { name: `${zone.name} Govt Hospital`, phone: "108", distance: "1.2 km" },
+          },
+        },
+        { upsert: true }
+      );
+    }
 
-    const zones = ZONES.map((z) => ({
-      name: z.name,
-      city: "Chennai",
-      location: { type: "Point", coordinates: z.coordinates },
-      safetyScore: z.score,
-      riskLevel: z.risk,
-      incidentCount: Math.floor(Math.random() * 10),
-      policeStation: {
-        name: z.name + " Police Station",
-        phone: "100",
-        distance: "0.8 km",
-      },
-      hospital: {
-        name: z.name + " Govt Hospital",
-        phone: "108",
-        distance: "1.2 km",
-      },
-    }));
+    for (const item of REPORTS) {
+      await Report.updateOne(
+        { city: "Chennai", category: item.category, description: item.description },
+        {
+          $set: {
+            isAnonymous: true,
+            category: item.category,
+            description: item.description,
+            city: "Chennai",
+            location: { type: "Point", coordinates: item.coordinates },
+            severity: item.score < 30 ? "high" : item.score < 60 ? "medium" : "low",
+            safetyScore: item.score,
+            status: "active",
+          },
+        },
+        { upsert: true }
+      );
+    }
 
-    await SafetyZone.insertMany(zones);
-    console.log(`✅ Added ${zones.length} safety zones`);
-
-    const reports = REPORTS.map((r) => ({
-      isAnonymous: true,
-      category: r.category,
-      description: r.description,
-      city: "Chennai",
-      location: { type: "Point", coordinates: r.coordinates },
-      severity: r.score < 30 ? "high" : r.score < 60 ? "medium" : "low",
-      safetyScore: r.score,
-      status: "active",
-    }));
-
-    await Report.insertMany(reports);
-    console.log(`✅ Added ${reports.length} sample reports`);
-
-    console.log("\n🎉 Database ready! Now run: npm run dev\n");
-    process.exit(0);
-  } catch (err) {
-    console.error("❌ Seed failed:", err.message);
-    process.exit(1);
+    console.log(`Seed complete: ${ZONES.length} demo zones and ${REPORTS.length} demo reports available.`);
+  } finally {
+    await mongoose.disconnect();
   }
 }
 
-seed();
+seed().catch((error) => {
+  console.error("Seed failed:", error.message);
+  process.exitCode = 1;
+});
