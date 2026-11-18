@@ -10,17 +10,18 @@ function signToken(id) {
 async function register(req, res) {
   try {
     const { name, email, password, city } = req.body;
+    const normalizedEmail = String(email || "").trim().toLowerCase();
 
-    if (!name || !email || !password) {
+    if (!name || !normalizedEmail || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const existing = await User.findOne({ email });
+    const existing = await User.findOne({ email: normalizedEmail });
     if (existing) {
       return res.status(400).json({ message: "Email already registered" });
     }
 
-    const user = await User.create({ name, email, password, city });
+    const user = await User.create({ name: String(name).trim(), email: normalizedEmail, password, city });
     const token = signToken(user._id);
 
     res.status(201).json({
@@ -41,8 +42,9 @@ async function register(req, res) {
 async function login(req, res) {
   try {
     const { email, password } = req.body;
+    const normalizedEmail = String(email || "").trim().toLowerCase();
 
-    const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({ email: normalizedEmail }).select("+password");
 
     if (!user || !(await user.matchPassword(password))) {
       return res.status(401).json({ message: "Invalid email or password" });
