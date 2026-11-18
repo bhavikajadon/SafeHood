@@ -77,6 +77,7 @@ async function createReport(req, res) {
       city: resolvedCity,
       severity,
       safetyScore,
+      isDemoData: false,
     });
 
     // A zone-score refresh should never make a successfully saved report look like a failed submission.
