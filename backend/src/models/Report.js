@@ -46,6 +46,11 @@ const reportSchema = new mongoose.Schema(
       type: Number,
       default: 50,
     },
+    // True only for illustrative fixtures created by the seed script.
+    isDemoData: {
+      type: Boolean,
+      default: false,
+    },
     upvotes: [
       {
         type: mongoose.Schema.Types.ObjectId,
