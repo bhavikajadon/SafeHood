@@ -124,6 +124,7 @@ async function updateNearestZone(coordinates, city) {
   const nearbyReports = await Report.find({
     city,
     status: "active",
+    isDemoData: false,
     createdAt: { $gte: thirtyDaysAgo },
     location: {
       $near: {
