@@ -11,265 +11,54 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
-function getColor(score) {
-  if (score >= 61) return "#22c55e";
-  if (score >= 31) return "#f59e0b";
-  return "#ef4444";
-}
+const CATEGORY_COLORS = { harassment:"#c8794d", theft:"#d0a34f", assault:"#bd625d", suspicious:"#8379aa", other:"#718b78" };
+function FlyTo({ coords }) { const map=useMap(); useEffect(()=>{if(coords)map.flyTo(coords,14,{duration:1.5});},[coords,map]); return null; }
 
-function getRiskLabel(score) {
-  if (score >= 61) return "Safe";
-  if (score >= 31) return "Moderate Risk";
-  return "Unsafe";
-}
+export default function SafetyMap({ city="Chennai" }) {
+  const [zones,setZones]=useState([]);
+  const [reports,setReports]=useState([]);
+  const [userLocation,setUserLocation]=useState(null);
+  const [liveAlerts,setLiveAlerts]=useState([]);
+  const [filter,setFilter]=useState("all");
+  const [mapError,setMapError]=useState("");
 
-const CAT_COLOR = {
-  harassment: "#f97316",
-  theft: "#eab308",
-  assault: "#ef4444",
-  suspicious: "#8b5cf6",
-  other: "#64748b",
-};
+  useEffect(()=>{
+    let active=true;
+    axios.get(`/api/zones?city=${encodeURIComponent(city)}`).then(r=>{if(active)setZones(r.data?.zones||[]);}).catch(()=>{});
+    axios.get(`/api/reports?city=${encodeURIComponent(city)}`).then(r=>{if(active)setReports(r.data?.reports||[]);}).catch(()=>setMapError("Reports are temporarily unavailable."));
+    return ()=>{active=false;};
+  },[city]);
 
-const CAT_EMOJI = {
-  harassment: "⚠️",
-  theft: "🔓",
-  assault: "🚨",
-  suspicious: "👁️",
-  other: "📍",
-};
-
-function FlyTo({ coords }) {
-  const map = useMap();
-
-  useEffect(() => {
-    if (coords) map.flyTo(coords, 14, { duration: 1.5 });
-  }, [coords, map]);
-
-  return null;
-}
-
-export default function SafetyMap({ city = "Chennai" }) {
-  const [zones, setZones] = useState([]);
-  const [reports, setReports] = useState([]);
-  const [userLocation, setUserLocation] = useState(null);
-  const [liveAlerts, setLiveAlerts] = useState([]);
-  const [filter, setFilter] = useState("all");
-
-  useEffect(() => {
-    axios.get(`/api/zones?city=${city}`)
-      .then((r) => setZones(r.data?.zones || []));
-
-    axios.get(`/api/reports?city=${city}`)
-      .then((r) => setReports(r.data?.reports || []));
-  }, [city]);
-
-  useSocket(city, (newReport) => {
-    setReports((prev) => [newReport, ...prev]);
-    setLiveAlerts((prev) => [newReport, ...prev.slice(0, 2)]);
-    setTimeout(() => setLiveAlerts((prev) => prev.slice(1)), 6000);
+  useSocket(city,(newReport)=>{
+    setReports(prev=>[newReport,...prev]);
+    setLiveAlerts(prev=>[newReport,...prev.slice(0,2)]);
+    window.setTimeout(()=>setLiveAlerts(prev=>prev.filter(item=>item!==newReport)),6500);
   });
 
-  function locateMe() {
-    if (!navigator.geolocation) {
-      alert("Geolocation not supported");
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      ({ coords }) => {
-        setUserLocation([coords.latitude, coords.longitude]);
-      },
-      () => {
-        alert("Unable to fetch location. Permission denied?");
-      }
-    );
+  function locateMe(){
+    if(!navigator.geolocation){setMapError("Location services are not available in this browser.");return;}
+    navigator.geolocation.getCurrentPosition(({coords})=>{setUserLocation([coords.latitude,coords.longitude]);setMapError("");},()=>setMapError("Location permission was not granted. You can still explore the map."),{enableHighAccuracy:true,timeout:10000});
   }
 
-  const filtered =
-    filter === "all"
-      ? reports
-      : reports.filter((r) => r.category === filter);
+  const filtered=filter==="all"?reports:reports.filter(r=>r.category===filter);
+  const visibleZones=zones.filter(z=>z.location?.coordinates);
+  const categories=["all","harassment","theft","assault","suspicious"];
 
-  /* Inject popup styles */
-  useEffect(() => {
-    const style = document.createElement("style");
-    style.innerHTML = `
-      .leaflet-popup-content-wrapper {
-        background: #fff !important;
-        border-radius: 12px !important;
-        border: 1px solid #e2e8f0 !important;
-        color: #0f172a !important;
-      }
-      .leaflet-popup-tip {
-        background: #fff !important;
-      }
-    `;
-    document.head.appendChild(style);
-    return () => document.head.removeChild(style);
-  }, []);
-
-  return (
-    <div className="relative w-full" style={{ height: "calc(100vh - 64px)" }}>
-
-      {/* Filter bar */}
-      <div style={{
-        position: "absolute",
-        top: 12,
-        left: "50%",
-        transform: "translateX(-50%)",
-        zIndex: 10,
-        display: "flex",
-        alignItems: "center",
-        gap: 6,
-        background: "#ffffff",
-        borderRadius: 14,
-        padding: "8px 12px",
-        boxShadow: "0 2px 16px rgba(15,23,42,0.1)",
-        border: "1px solid #e2e8f0",
-        whiteSpace: "nowrap",
-      }}>
-        <span style={{
-          fontSize: 11,
-          fontWeight: 700,
-          color: "#94a3b8",
-          marginRight: 4,
-          letterSpacing: "0.06em",
-          textTransform: "uppercase"
-        }}>
-          Filter:
-        </span>
-
-        {["all", "harassment", "theft", "assault", "suspicious"].map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setFilter(cat)}
-            style={{
-              padding: "5px 12px",
-              borderRadius: 99,
-              fontSize: 11,
-              fontWeight: 700,
-              cursor: "pointer",
-              border: "1.5px solid",
-              borderColor: filter === cat ? "#2563eb" : "#e2e8f0",
-              background: filter === cat ? "#eff6ff" : "#fff",
-              color: filter === cat ? "#2563eb" : "#94a3b8",
-            }}
-          >
-            {cat}
-          </button>
-        ))}
-
-        <button
-          onClick={locateMe}
-          style={{
-            marginLeft: 4,
-            padding: "5px 12px",
-            borderRadius: 99,
-            fontSize: 11,
-            fontWeight: 700,
-            cursor: "pointer",
-            background: "#f0fdf4",
-            color: "#059669",
-            border: "1.5px solid #bbf7d0",
-          }}
-        >
-          📍 Find me
-        </button>
-      </div>
-
-      {/* Live alerts */}
-      <div style={{
-        position: "absolute",
-        top: 64,
-        right: 12,
-        zIndex: 10,
-        display: "flex",
-        flexDirection: "column",
-        gap: 8
-      }}>
-        {liveAlerts.map((alert, i) => (
-          <div key={i} style={{
-            background: "#fff",
-            border: "1.5px solid #fecaca",
-            borderRadius: 12,
-            padding: "10px 14px",
-            maxWidth: 260,
-            boxShadow: "0 4px 16px rgba(239,68,68,0.12)",
-            fontSize: 12,
-            fontWeight: 600,
-            color: "#dc2626",
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-          }}>
-            <span className="live-dot" />
-            <span><strong>Live:</strong> {alert.category} reported nearby</span>
-          </div>
-        ))}
-      </div>
-
-      {/* Legend */}
-      <div style={{
-        position: "absolute",
-        bottom: 24,
-        left: 12,
-        zIndex: 10,
-        background: "#ffffff",
-        borderRadius: 14,
-        padding: "14px 16px",
-        boxShadow: "0 2px 16px rgba(15,23,42,0.1)",
-        border: "1px solid #e2e8f0",
-        minWidth: 160,
-      }}>
-        <p style={{
-          fontSize: 10,
-          fontWeight: 700,
-          color: "#94a3b8",
-          textTransform: "uppercase",
-          marginBottom: 10
-        }}>
-          Safety Score
-        </p>
-
-        {[{ color: "#22c55e", label: "Safe (61–100)" },
-          { color: "#f59e0b", label: "Moderate (31–60)" },
-          { color: "#ef4444", label: "Unsafe (0–30)" }]
-          .map(({ color, label }) => (
-            <div key={label} style={{ display: "flex", gap: 8, marginBottom: 7 }}>
-              <div style={{ width: 11, height: 11, borderRadius: "50%", background: color }} />
-              <span style={{ fontSize: 11, color: "#475569" }}>{label}</span>
-            </div>
-        ))}
-
-        <div style={{ borderTop: "1px solid #f1f5f9", marginTop: 10, paddingTop: 10 }}>
-          {Object.entries(CAT_COLOR).map(([cat, color]) => (
-            <div key={cat} style={{ display: "flex", gap: 8, marginBottom: 5 }}>
-              <div style={{ width: 9, height: 9, borderRadius: "50%", background: color }} />
-              <span style={{ fontSize: 11, color: "#64748b" }}>{cat}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Map */}
-      <MapContainer center={[13.0827, 80.2707]} zoom={12} style={{ width: "100%", height: "100%" }}>
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-
-        {userLocation && <FlyTo coords={userLocation} />}
-
-        {filtered.map((report, i) => {
-          if (!report.location?.coordinates) return null;
-          const [lng, lat] = report.location.coordinates;
-          if (!lat || !lng) return null;
-
-          return (
-            <CircleMarker key={i} center={[lat, lng]} radius={6} pathOptions={{ color: CAT_COLOR[report.category] }}>
-              <Popup>{report.category}</Popup>
-            </CircleMarker>
-          );
-        })}
+  return <div className="safety-map-shell">
+    <div className="map-toolbar">
+      <div className="map-filters"><span className="filter-label">SHOW</span>{categories.map(cat=><button key={cat} onClick={()=>setFilter(cat)} className={filter===cat?"filter-chip selected":"filter-chip"}>{cat==="all"?"All reports":cat}</button>)}</div>
+      <button className="locate-button" onClick={locateMe}><span>⌖</span> Locate me</button>
+    </div>
+    {mapError&&<div className="map-status" role="status">{mapError}<button onClick={()=>setMapError("")} aria-label="Dismiss">×</button></div>}
+    {liveAlerts.length>0&&<div className="live-alert-stack">{liveAlerts.map((item,i)=><div key={item._id||i} className="live-alert"><span className="live-dot"/><span>New {item.category||"safety"} report received</span></div>)}</div>}
+    <div className="map-canvas">
+      <MapContainer center={[13.0827,80.2707]} zoom={12} scrollWheelZoom style={{width:"100%",height:"100%"}}>
+        <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+        {userLocation&&<FlyTo coords={userLocation}/>}
+        {visibleZones.map((zone,i)=>{const [lng,lat]=zone.location.coordinates;return lat&&lng?<CircleMarker key={zone._id||i} center={[lat,lng]} radius={Math.min(22,Math.max(9,zone.radius?zone.radius/30:14))} pathOptions={{color:zone.score>=61?"#658b70":zone.score>=31?"#c69a52":"#bd625d",fillOpacity:.2,weight:2}}><Popup><strong>{zone.name||"Safety zone"}</strong><br/>Community safety signal</Popup></CircleMarker>:null;})}
+        {filtered.map((report,i)=>{if(!report.location?.coordinates)return null;const[lng,lat]=report.location.coordinates;if(!lat||!lng)return null;return <CircleMarker key={report._id||i} center={[lat,lng]} radius={7} pathOptions={{color:CATEGORY_COLORS[report.category]||CATEGORY_COLORS.other,fillColor:CATEGORY_COLORS[report.category]||CATEGORY_COLORS.other,fillOpacity:.82,weight:2}}><Popup><strong>{report.category||"Community report"}</strong><br/>{report.description||report.title||"A safety observation was shared here."}</Popup></CircleMarker>;})}
       </MapContainer>
     </div>
-  );
+    <div className="map-legend"><span className="legend-title">MAP KEY</span><span><i className="legend-dot safe"/> Safer signals</span><span><i className="legend-dot moderate"/> Caution</span><span><i className="legend-dot risk"/> Reports</span><span className="legend-count">{filtered.length} report{filtered.length===1?"":"s"}</span></div>
+  </div>;
 }
