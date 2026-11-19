@@ -80,6 +80,16 @@ export default function SafetyMap({ city="Chennai", routePlan=null, selectedRout
             }}
           />
         ))}
+        {routePlan?.originCoordinates?.length===2&&(
+          <CircleMarker center={[routePlan.originCoordinates[1],routePlan.originCoordinates[0]]} radius={9} pathOptions={{color:"#fff",weight:3,fillColor:"#477a55",fillOpacity:1}}>
+            <Popup>Your starting location</Popup>
+          </CircleMarker>
+        )}
+        {routePlan?.destinationCoordinates?.length===2&&(
+          <CircleMarker center={[routePlan.destinationCoordinates[1],routePlan.destinationCoordinates[0]]} radius={9} pathOptions={{color:"#fff",weight:3,fillColor:"#c8794d",fillOpacity:1}}>
+            <Popup>Your destination</Popup>
+          </CircleMarker>
+        )}
         {visibleZones.map((zone,i)=>{const [lng,lat]=zone.location.coordinates;return lat&&lng?<CircleMarker key={zone._id||i} center={[lat,lng]} radius={Math.min(22,Math.max(9,zone.radius?zone.radius/30:14))} pathOptions={{color:zone.safetyScore>=61?"#658b70":zone.safetyScore>=31?"#c69a52":"#bd625d",fillOpacity:.2,weight:2}}><Popup><strong>{zone.name||"Safety zone"}</strong><br/>{zone.isDemoData?"Illustrative sample zone · not verified":"Community safety signal"}<br/>Score: {zone.safetyScore ?? "Not rated"}/100</Popup></CircleMarker>:null;})}
         {filtered.map((report,i)=>{if(!report.location?.coordinates)return null;const[lng,lat]=report.location.coordinates;if(!lat||!lng)return null;return <CircleMarker key={report._id||i} center={[lat,lng]} radius={7} pathOptions={{color:CATEGORY_COLORS[report.category]||CATEGORY_COLORS.other,fillColor:CATEGORY_COLORS[report.category]||CATEGORY_COLORS.other,fillOpacity:.82,weight:2}}><Popup><strong>{report.category||"Community report"}</strong><br/>{report.description||report.title||"A safety observation was shared here."}<br/>{report.isDemoData?"Illustrative sample report · not verified":"Community-submitted report"}</Popup></CircleMarker>;})}
       </MapContainer>
