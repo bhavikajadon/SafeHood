@@ -494,3 +494,105 @@ body{background:#f7f9fc;color:var(--ink)}
   .emergency-nav{box-shadow:none}
   .emergency-primary-call{width:fit-content}
 }
+
+
+/* Emergency page colour balance: blue for structure, green for support, red for urgent actions. */
+.emergency-page{
+  background:#f5f8fb;
+}
+.emergency-hero{
+  background:#eaf1f7;
+  border:1px solid #e0e9f1;
+}
+.emergency-hero h1{color:#2d4862}
+.emergency-hero h1 em{color:#567b9c}
+.emergency-hero-copy>p{color:#687f95}
+.emergency-ring{border-color:#c2d1de}
+.ring-b{border-color:#d2dfd0}
+.emergency-shield{
+  background:#f8fbf8;
+  box-shadow:0 14px 34px rgba(49,80,61,.10);
+}
+.emergency-shield svg path[fill="#edf2e9"]{
+  fill:#e4eee5;
+}
+.emergency-shield svg path[stroke="#5c7a60"]{
+  stroke:#5e8065;
+}
+.emergency-art-caption{
+  border-color:#dce8dd;
+  color:#55775d;
+  background:#fff;
+}
+.emergency-heading h2,
+.safety-tips-section h2{color:#2d4862}
+.emergency-heading h2 span{color:#d93636}
+.emergency-badge{
+  background:#edf3f8;
+  border-color:#dce7f0;
+  color:#52718e;
+}
+.helpline-card{
+  background:#fff;
+  border-color:#e1e9f0;
+}
+.helpline-symbol{
+  background:#eaf1f7;
+  color:#587895;
+}
+.helpline-number{color:#557895}
+.helpline-card.primary{
+  background:#fff4f3;
+  border-color:#f0d1ce;
+}
+.helpline-card.primary .helpline-symbol{
+  background:#fde3e1;
+  color:#c93434;
+}
+.helpline-card.primary .helpline-number{color:#d93636}
+.emergency-note{color:#8493a2}
+.share-location-card{
+  background:#eef5ef;
+  border-color:#dce9dd;
+}
+.share-location-icon{
+  background:#dfece0;
+  color:#52795a;
+}
+.share-location-copy h3{color:#355c3d}
+.share-location-copy>p{color:#728979}
+.share-location-copy .location-feedback{color:#3e7049}
+.share-location-button{
+  background:#527b59;
+  color:#fff;
+  box-shadow:0 5px 13px rgba(66,112,74,.15);
+}
+.share-location-button:hover{
+  background:#416949;
+}
+.safety-tips-section h2{color:#2d4862}
+.safety-tip{
+  background:#fff;
+  border-color:#e1e9f0;
+}
+.safety-tip>span{color:#7290aa}
+.safety-tip p{color:#647a90}
+.emergency-disclaimer{
+  border-color:#e0e8ef;
+  color:#8795a3;
+}
+.emergency-primary-call{
+  background:#d93636;
+}
+.emergency-primary-call:hover{
+  background:#bf2929;
+}
+.emergency-nav{
+  background:#d93636;
+  color:#fff;
+}
+.emergency-nav:hover{background:#bf2929;color:#fff}
+@media(max-width:760px){
+  .emergency-hero{background:#eaf1f7}
+  .share-location-card{background:#eef5ef}
+}
