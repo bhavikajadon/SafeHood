@@ -213,3 +213,44 @@ a{color:inherit}
 .map-toolbar-actions{display:flex;align-items:center;gap:8px;pointer-events:none}
 .demo-data-pill{pointer-events:none;background:#fff8ed;border:1px solid #eed9ba;color:#957044;padding:8px 10px;border-radius:9px;font-size:9px;font-weight:700;white-space:nowrap;box-shadow:0 4px 15px #30442c12}
 @media(max-width:680px){.map-toolbar-actions{align-self:flex-end}.demo-data-pill{padding:7px 9px;font-size:8px}}
+
+/* Lower-reported-risk route planner */
+.route-planner{position:relative;z-index:2;margin:0 0 12px;padding:16px 17px;background:#fbfcf9;border:1px solid #e5ebe1;border-radius:12px;color:#344535}
+.route-planner-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}
+.route-planner-eyebrow{font-size:9px;font-weight:800;letter-spacing:1.5px;color:#91a08e}
+.route-planner-heading h3{font:750 16px Manrope,sans-serif;letter-spacing:-.35px;margin:4px 0}
+.route-planner-heading p{font-size:11px;color:#879286;line-height:1.5}
+.route-planner-icon{width:36px;height:36px;display:grid;place-items:center;border-radius:11px;background:#eaf0e7;color:#54735a;font-size:21px;flex-shrink:0}
+.route-planner-form{display:grid;grid-template-columns:minmax(180px,.85fr) minmax(220px,1.35fr) auto;align-items:end;gap:10px}
+.route-origin-summary,.route-destination-field{min-height:61px;padding:9px 12px;background:#fff;border:1px solid #e4e9df;border-radius:9px;display:flex;flex-direction:column;justify-content:center;gap:5px}
+.route-field-label{font-size:8px;font-weight:800;letter-spacing:1.25px;color:#9aa598}
+.route-origin-value{font-size:11px;font-weight:700;color:#4d6550;display:flex;align-items:center;gap:7px}
+.route-origin-dot{width:7px;height:7px;border-radius:50%;background:#668b6b;box-shadow:0 0 0 3px #e8f0e6}
+.route-origin-hint{font-size:9px;color:#9aa397}
+.route-destination-field input{width:100%;padding:0;border:0;outline:0;background:transparent;color:#344535;font:600 11px "DM Sans",sans-serif}
+.route-destination-field input::placeholder{color:#a4ada1;font-weight:400}
+.route-submit-button{height:61px;padding:0 17px;border:0;border-radius:9px;background:#59785e;color:#fff;font-size:10px;font-weight:800;cursor:pointer;white-space:nowrap;transition:background .18s ease}
+.route-submit-button:hover{background:#45664b}
+.route-submit-button:disabled{opacity:.6;cursor:wait}
+.route-submit-button span{margin-left:10px;font-size:15px}
+.route-error{margin-top:10px;padding:9px 11px;border-radius:8px;background:#fff4ef;border:1px solid #f0d8ce;color:#9b594a;font-size:10px}
+.route-plan-results{margin-top:13px;padding-top:12px;border-top:1px solid #e8ede5}
+.route-results-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:9px}
+.route-results-heading>div{display:flex;flex-direction:column;gap:4px;min-width:0}
+.route-results-heading strong{font-size:11px;color:#405b43;line-height:1.5}
+.route-results-count{font-size:9px;color:#929d90}
+.route-clear-button{border:1px solid #e1e8df;border-radius:7px;padding:7px 9px;background:#fff;color:#71816f;font-size:9px;font-weight:700;cursor:pointer;white-space:nowrap}
+.route-no-signals{padding:9px 10px;background:#fff8eb;border:1px solid #f0e2c7;border-radius:8px;color:#8b7044;font-size:10px;line-height:1.5;margin-bottom:9px}
+.route-option-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px}
+.route-option{min-width:0;display:flex;align-items:center;gap:10px;padding:10px;text-align:left;background:#fff;border:1px solid #e5eae2;border-radius:9px;cursor:pointer;color:#526452;transition:border-color .15s ease,background .15s ease}
+.route-option.selected{border-color:#76957a;background:#f1f6ef;box-shadow:inset 0 0 0 1px #dce8d9}
+.route-option-rank{width:24px;height:24px;display:grid;place-items:center;flex-shrink:0;border-radius:50%;background:#edf2e9;color:#55745a;font-size:10px;font-weight:800}
+.route-option-copy{display:flex;flex-direction:column;gap:3px;min-width:0}
+.route-option-copy strong{font-size:10px;color:#405e45}
+.route-option-copy span{font-size:9px;color:#879285;line-height:1.4}
+.route-option-radio{width:18px;height:18px;border:1px solid #dbe3d8;border-radius:50%;margin-left:auto;flex-shrink:0;display:grid;place-items:center;font-size:10px;color:#fff}
+.route-option.selected .route-option-radio{background:#638267;border-color:#638267}
+.route-disclaimer{margin-top:10px;color:#8b9489;font-size:9px;line-height:1.55}
+.route-attribution{margin-top:4px;color:#a2aaa0;font-size:8px}
+@media(max-width:760px){.route-planner{padding:13px}.route-planner-form{grid-template-columns:1fr 1fr}.route-submit-button{grid-column:1/-1;height:43px}.route-origin-summary,.route-destination-field{min-height:57px}}
+@media(max-width:480px){.route-planner-form{grid-template-columns:1fr}.route-submit-button{grid-column:auto}.route-planner-heading h3{font-size:14px}.route-option-list{grid-template-columns:1fr}.route-results-heading{align-items:center}}
