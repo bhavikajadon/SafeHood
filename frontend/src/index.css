@@ -254,3 +254,165 @@ a{color:inherit}
 .route-attribution{margin-top:4px;color:#a2aaa0;font-size:8px}
 @media(max-width:760px){.route-planner{padding:13px}.route-planner-form{grid-template-columns:1fr 1fr}.route-submit-button{grid-column:1/-1;height:43px}.route-origin-summary,.route-destination-field{min-height:57px}}
 @media(max-width:480px){.route-planner-form{grid-template-columns:1fr}.route-submit-button{grid-column:auto}.route-planner-heading h3{font-size:14px}.route-option-list{grid-template-columns:1fr}.route-results-heading{align-items:center}}
+
+
+/* SafeHood restrained blue theme: calm, practical and readable */
+:root{
+  color-scheme:light;
+  --ink:#263548;
+  --muted:#718096;
+  --green:#587590;
+  --green-dark:#405d78;
+  --green-pale:#edf2f7;
+  --line:#e3e9f0;
+  --paper:#ffffff;
+  --orange:#c38b60;
+  --shadow:0 12px 34px rgba(43,62,82,.065);
+}
+body{background:#f7f9fc;color:var(--ink)}
+::selection{background:#dce7f1;color:#263548}
+.topbar{background:rgba(249,251,253,.96);border-bottom-color:#e3e9f0}
+.brand-mark{color:#557590;background:#edf2f7}
+.brand-name{color:#263548}
+.brand-name span{color:#c38b60}
+.nav-link{color:#718096}
+.nav-link span{color:#8c9caf}
+.nav-link:hover,.nav-link.active{background:#edf2f7;color:#405d78}
+.nav-login{color:#34465a;border-color:#e1e7ee}
+.nav-login span{color:#587590}
+.profile-chip{color:#40546a}
+.avatar{background:#e3ebf3;color:#405d78}
+.emergency-nav{color:#a45245;background:#fbf1ed;border-color:#f0dfd7}
+.welcome-strip{background:#edf2f7}
+.eyebrow{color:#587590}
+.eyebrow-dot{background:#8098b1;box-shadow:0 0 0 4px #dce6ef}
+.welcome-copy h1{color:#283b50}
+.welcome-copy h1 em{color:#627f9c}
+.welcome-copy>p{color:#697b8e}
+.button-primary{background:#587590;color:#fff;box-shadow:0 5px 14px rgba(65,91,117,.16)}
+.button-primary:hover{background:#405d78}
+.button-soft{color:#506b86;border-color:#dce5ed;background:#fff}
+.art-disc{background:#f8fafc;box-shadow:0 16px 40px rgba(52,78,104,.10)}
+.art-orbit{border-color:#bfccda}
+.orbit-two{border-color:#d0dae5}
+.art-note{border-color:#e3e9f0;color:#52677e;box-shadow:0 7px 20px rgba(42,60,79,.08)}
+.note-top span{color:#c38b60}
+.green-mini-dot{background:#6888a7}
+.principles-row{border-color:var(--line)}
+.principle{color:#63758a}
+.principle-number{color:#9aa8b7}
+.principle-icon{background:#eef3f8;color:#607e9c}
+.muted-eyebrow{color:#8e9cad}
+.heading-period{color:#c38b60}
+.section-heading p{color:#7b8a9c}
+.city-pill,.map-live{color:#5e7389}
+.city-pill{border-color:#e1e7ee}
+.city-pill span{color:#587590}
+.map-frame{border-color:#e2e8ef;box-shadow:0 12px 34px rgba(43,62,82,.06)}
+.safety-map-shell{background:#edf1f5}
+.map-filters,.locate-button{border-color:#e0e7ee;box-shadow:0 3px 12px rgba(44,64,86,.08)}
+.filter-label{color:#95a2b1}
+.filter-chip{color:#718297}
+.filter-chip.selected{background:#eaf0f6;color:#456582}
+.locate-button{color:#506f8d}
+.map-legend{border-color:#e1e7ee;color:#6e7f92;box-shadow:0 3px 12px rgba(44,64,86,.08)}
+.legend-title{color:#9aa7b6}
+.legend-dot.safe{background:#6688a8}
+.legend-dot.moderate{background:#c6a16d}
+.legend-dot.risk{background:#bf766c}
+.legend-count{border-color:#e4e9ef;color:#506b86}
+.live-alert-stack .live-alert{box-shadow:0 4px 14px rgba(73,54,48,.08)}
+.map-status{box-shadow:0 3px 12px rgba(58,67,78,.08)}
+.map-disclaimer{color:#8c99a7}
+.community-banner{background:#f0f4f8;border-color:#e3e9f0}
+.community-symbol{background:#e2ebf3;color:#5b7896}
+.community-banner h3{color:#344a61}
+.community-banner p{color:#77879a}
+.text-link{color:#4f6f8d}
+.dismiss-button{color:#94a2b0}
+.site-footer{border-color:#e3e9f0;color:#929eab}
+.site-footer a{color:#5c7895}
+.app-loading{color:#718096}
+.loader{border-color:#dfe7ef;border-top-color:#587590}
+.leaflet-container{background:#edf1f5!important}
+.card{border-color:#e3e9f0;box-shadow:0 4px 18px rgba(43,62,82,.04)}
+.card-hover:hover{border-color:#cbd7e3;box-shadow:0 10px 24px rgba(43,62,82,.07)}
+.btn-primary{background:#587590;box-shadow:0 4px 12px rgba(65,91,117,.14)}
+.btn-primary:hover{background:#405d78}
+.btn-secondary{border-color:#e1e7ee;color:#536f8c}
+.input-field{background:#fbfcfe;border-color:#dfe6ee}
+.input-field:focus{border-color:#8ba3bb;box-shadow:0 0 0 3px #e6edf4}
+.input-field::placeholder{color:#9aa7b5}
+.page-subtitle{color:#7d8da0}
+.section-label{color:#91a0af}
+.toggle-track{border-color:#dce5ed;background:#edf2f7}
+.toggle-track.on{background:#6786a4;border-color:#6786a4}
+.emergency-page{background:#f7f9fc}
+.auth-page{background:#f7f9fc}
+.auth-aside{background:#eaf0f6}
+.auth-aside h1{color:#293d53}
+.auth-aside h1 em{color:#637f9d}
+.auth-aside-content>p{color:#697d91}
+.auth-aside-foot{color:#627b96}
+.auth-aside-star{background:#dce6f0;color:#5e7b99}
+.auth-aside-orbit{border-color:#c3cfdb;box-shadow:0 0 0 55px #eaf0f6,0 0 0 56px #d0dae4,0 0 0 115px #eaf0f6,0 0 0 116px #d0dae4}
+.auth-back{color:#7f8fa1}
+.auth-card{border-color:#e3e9f0;box-shadow:0 12px 34px rgba(43,62,82,.055)}
+.auth-mark{color:#587590;background:#edf2f7}
+.auth-card h2{color:#293c51}
+.auth-description{color:#7a8a9b}
+.auth-label{color:#718398}
+.auth-switch{color:#8997a5}
+.auth-switch a{color:#587590}
+.auth-footnote{color:#9aa6b2}
+.emergency-hero{background:#eaf0f6}
+.emergency-hero h1{color:#293d53}
+.emergency-hero h1 em{color:#637f9d}
+.emergency-hero-copy>p{color:#6c7f92}
+.emergency-primary-call{border-color:#e0e7ee;box-shadow:0 6px 16px rgba(44,64,86,.07)}
+.emergency-heading h2,.safety-tips-section h2{color:#293d53}
+.emergency-heading p{color:#7b8b9c}
+.emergency-badge{border-color:#e3e9f0;color:#62778d}
+.helpline-card{border-color:#e3e9f0}
+.helpline-card:hover{border-color:#cbd8e4;box-shadow:0 8px 20px rgba(44,64,86,.07)}
+.helpline-symbol{background:#edf2f7;color:#5c7997}
+.helpline-content strong{color:#344a61}
+.helpline-content small{color:#8795a4}
+.share-location-card{background:#f0f4f8;border-color:#e3e9f0}
+.share-location-icon{background:#e1eaf2;color:#5d7a98}
+.share-location-copy h3{color:#344a61}
+.share-location-copy>p{color:#7b8c9d}
+.share-location-copy .location-feedback{color:#4f718f}
+.safety-tip{border-color:#e3e9f0}
+.safety-tip>span{color:#96a5b4}
+.safety-tip p{color:#687b90}
+.emergency-disclaimer{border-color:#e3e9f0;color:#8b99a7}
+.demo-data-pill{box-shadow:0 3px 12px rgba(44,64,86,.07)}
+/* Route planning uses the same understated blue palette. */
+.route-planner{background:#f8fafc;border-color:#e2e8ef;color:#344a61}
+.route-planner-eyebrow,.route-field-label{color:#91a0af}
+.route-planner-heading p{color:#7c8c9e}
+.route-planner-icon{background:#eaf0f6;color:#587590}
+.route-origin-summary,.route-destination-field{border-color:#e1e7ee}
+.route-origin-value{color:#4e6b89}
+.route-origin-dot{background:#6686a3;box-shadow:0 0 0 3px #e6edf4}
+.route-origin-hint{color:#929eaa}
+.route-destination-field input{color:#344a61}
+.route-destination-field input::placeholder{color:#a0abb6}
+.route-submit-button{background:#587590}
+.route-submit-button:hover{background:#405d78}
+.route-plan-results{border-color:#e5eaf0}
+.route-results-heading strong{color:#425f7c}
+.route-results-count{color:#8997a5}
+.route-clear-button{border-color:#e1e7ee;color:#6d8196}
+.route-option{border-color:#e3e9f0;color:#526b84}
+.route-option.selected{border-color:#8ca4bb;background:#f0f5f9;box-shadow:inset 0 0 0 1px #dbe5ee}
+.route-option-rank{background:#eaf0f6;color:#557492}
+.route-option-copy strong{color:#405f7d}
+.route-option-copy span{color:#8191a2}
+.route-option-radio{border-color:#d9e2eb}
+.route-option.selected .route-option-radio{background:#587590;border-color:#587590}
+.route-disclaimer{color:#8492a0}
+.route-attribution{color:#9aa5b1}
+/* Keep emergency/status colours meaningful; blue is the app identity, not an alert colour. */
+.emergency-pulse,.emergency-dot,.live-dot{box-shadow:0 0 0 4px #f7e5df}
