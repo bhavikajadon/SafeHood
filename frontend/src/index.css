@@ -416,3 +416,11 @@ body{background:#f7f9fc;color:var(--ink)}
 .route-attribution{color:#9aa5b1}
 /* Keep emergency/status colours meaningful; blue is the app identity, not an alert colour. */
 .emergency-pulse,.emergency-dot,.live-dot{box-shadow:0 0 0 4px #f7e5df}
+
+/* Match inline brand illustrations to the blue identity without adding gradients. */
+.welcome-art .art-disc svg path[fill="#e5eee5"]{fill:#e6edf4}
+.welcome-art .art-disc svg path[stroke="#58745f"]{stroke:#587590}
+.welcome-art .art-disc svg path[stroke="#58745f"]{stroke:#587590}
+.emergency-shield svg path[fill="#edf2e9"]{fill:#e7eef5}
+.emergency-shield svg path[stroke="#5c7a60"]{stroke:#587590}
+.emergency-shield svg path[stroke="#5c7a60"]{stroke:#587590}
