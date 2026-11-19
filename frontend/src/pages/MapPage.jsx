@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import SafetyMap from "../components/map/SafetyMap";
+import SafeRoutePlanner from "../components/map/SafeRoutePlanner";
 import { useAuth } from "../context/AuthContext";
 
 const quickStats = [
@@ -12,6 +13,8 @@ const quickStats = [
 export default function MapPage() {
   const { user } = useAuth();
   const [showIntro, setShowIntro] = useState(true);
+  const [routePlan, setRoutePlan] = useState(null);
+  const [selectedRouteIndex, setSelectedRouteIndex] = useState(0);
   const city = user?.city || "Chennai";
 
   return <main className="dashboard-page">
@@ -42,7 +45,15 @@ export default function MapPage() {
         <div><div className="eyebrow muted-eyebrow">YOUR LOCAL PICTURE</div><h2>Explore your area<span className="heading-period">.</span></h2><p>Community-submitted reports and clearly labelled illustrative map fixtures.</p></div>
         <div className="map-heading-right"><span className="city-pill"><span>⌖</span>{city}</span><span className="map-live"><span className="green-mini-dot"/> Live updates</span></div>
       </div>
-      <div className="map-frame"><SafetyMap city={city}/></div>
+      <div className="map-frame">
+        <SafeRoutePlanner
+          city={city}
+          onResults={(result) => { setRoutePlan(result); setSelectedRouteIndex(0); }}
+          selectedRouteIndex={selectedRouteIndex}
+          onSelectRoute={setSelectedRouteIndex}
+        />
+        <SafetyMap city={city} routePlan={routePlan} selectedRouteIndex={selectedRouteIndex}/>
+      </div>
       <div className="map-disclaimer">Map items may include illustrative demo fixtures and community-submitted reports. Scores are not official safety ratings or guarantees. Verify information independently and contact local emergency services when needed.</div>
     </section>
 
