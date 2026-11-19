@@ -25,7 +25,7 @@ The route planner starts from the visitor's browser location (with permission), 
 
 This is only a comparison of the data SafeHood currently has. It is not a prediction of danger or a guarantee of safety. It does not include unreported incidents, verified police data, lighting, live traffic, temporary events, road closures, or pedestrian-specific conditions. Seeded Chennai records are illustrative and must remain labelled as demo data.
 
-The portfolio defaults use the public Nominatim and OSRM services. Destination lookups are user-submitted (not autocomplete), cached, and paced by the backend. Public endpoints are shared best-effort services and may limit or withdraw access; for a larger or production deployment, use a provider or self-hosted service appropriate to your traffic and terms. The backend providers can be changed with optional `GEOCODING_URL` and `ROUTING_URL` environment variables. The Nominatim and OSRM/OpenStreetMap attribution is displayed with route results.
+The portfolio defaults use the public Nominatim and OSRM services. Destination lookups are user-submitted (not autocomplete), cached, and paced by the backend. Public endpoints are shared best-effort services and may limit or withdraw access; for a larger or production deployment, use a provider or self-hosted service appropriate to your traffic and terms. The backend providers can be redirected without a code change using optional `GEOCODING_URL` (a Nominatim-compatible search endpoint) and `ROUTING_URL` (an OSRM-compatible driving-route endpoint) environment variables. The Nominatim and OSRM/OpenStreetMap attribution is displayed with route results.
 
 ## Stack
 
