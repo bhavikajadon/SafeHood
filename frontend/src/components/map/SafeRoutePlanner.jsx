@@ -94,7 +94,7 @@ export default function SafeRoutePlanner({
         <div className="route-origin-summary">
           <span className="route-field-label">FROM</span>
           <span className="route-origin-value"><span className="route-origin-dot" /> Your current location</span>
-          <span className="route-origin-hint">GPS permission required</span>
+          <span className="route-origin-hint">GPS permission required · driving routes</span>
         </div>
         <label className="route-destination-field">
           <span className="route-field-label">TO</span>
@@ -151,7 +151,7 @@ export default function SafeRoutePlanner({
           </div>
 
           <p className="route-disclaimer">
-            This is a relative comparison of available map signals, not a safety guarantee. Reports may be incomplete or illustrative; the route does not account for unreported incidents, lighting, live conditions or road closures. Check local information and use your judgement.
+            This is a relative comparison of available map signals, not a safety guarantee. Reports may be incomplete or illustrative; the route does not account for unreported incidents, lighting, live conditions or road closures. Your current coordinates and destination are sent to the routing services for this request and are not saved to your SafeHood profile. Check local information and use your judgement.
           </p>
           <p className="route-attribution">{plan.attribution}</p>
         </div>
