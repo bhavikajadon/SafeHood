@@ -424,3 +424,73 @@ body{background:#f7f9fc;color:var(--ink)}
 .emergency-shield svg path[fill="#edf2e9"]{fill:#e7eef5}
 .emergency-shield svg path[stroke="#5c7a60"]{stroke:#587590}
 .emergency-shield svg path[stroke="#5c7a60"]{stroke:#587590}
+
+
+/* Emergency actions: unmistakable red, while the rest of the product stays calm blue. */
+.emergency-nav{
+  color:#fff;
+  background:#d93636;
+  border:1px solid #cf3030;
+  box-shadow:0 3px 10px rgba(190,42,42,.16);
+  transition:background .18s ease,transform .18s ease,box-shadow .18s ease;
+}
+.emergency-nav:hover{
+  color:#fff;
+  background:#bf2929;
+  transform:translateY(-1px);
+  box-shadow:0 5px 13px rgba(190,42,42,.2);
+}
+.emergency-pulse{
+  width:7px;
+  height:7px;
+  background:#fff;
+  box-shadow:0 0 0 4px rgba(255,255,255,.2);
+}
+.emergency-primary-call{
+  color:#fff;
+  background:#d93636;
+  border:1px solid #cf3030;
+  box-shadow:0 7px 18px rgba(190,42,42,.18);
+  transition:background .18s ease,transform .18s ease,box-shadow .18s ease;
+}
+.emergency-primary-call:hover{
+  color:#fff;
+  background:#bf2929;
+  transform:translateY(-2px);
+  box-shadow:0 10px 22px rgba(190,42,42,.22);
+}
+.emergency-primary-call small{color:#ffe3e3}
+.emergency-primary-call strong{color:#fff}
+.call-icon{
+  color:#fff;
+  background:rgba(255,255,255,.16);
+  border:1px solid rgba(255,255,255,.18);
+}
+.helpline-card.primary{
+  background:#fff5f4;
+  border-color:#f3d2cf;
+}
+.helpline-card.primary:hover{
+  border-color:#e7aaa5;
+  box-shadow:0 8px 20px rgba(190,42,42,.09);
+}
+.helpline-card.primary .helpline-symbol{
+  background:#fde5e3;
+  color:#c92f2f;
+}
+.helpline-card.primary .helpline-number{color:#d93636}
+.emergency-heading h2 span{color:#d93636}
+.emergency-dot{
+  background:#d93636;
+  box-shadow:0 0 0 4px #fbe5e3;
+}
+.emergency-primary-call:focus-visible,
+.emergency-nav:focus-visible,
+.helpline-card:focus-visible{
+  outline:3px solid #f0a5a1;
+  outline-offset:3px;
+}
+@media(max-width:680px){
+  .emergency-nav{box-shadow:none}
+  .emergency-primary-call{width:fit-content}
+}
