@@ -1,8 +1,9 @@
 const Report = require("../models/Report");
 const SafetyZone = require("../models/SafetyZone");
 
-const NOMINATIM_URL = "https://nominatim.openstreetmap.org/search";
-const OSRM_URL = "https://router.project-osrm.org/route/v1/driving";
+const NOMINATIM_URL = process.env.GEOCODING_URL || "https://nominatim.openstreetmap.org/search";
+const OSRM_URL = process.env.ROUTING_URL || "https://router.project-osrm.org/route/v1/driving";
+const APP_USER_AGENT = "SafeHood/1.0 (+https://safe-hood.vercel.app)";
 const REQUEST_GAP_MS = 1100;
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
@@ -55,7 +56,7 @@ function geocodeDestination(destination, city) {
     const response = await fetch(url, {
       headers: {
         Accept: "application/json",
-        "User-Agent": "SafeHoodPortfolio/1.0 (community route planning)",
+        "User-Agent": APP_USER_AGENT,
       },
       signal: AbortSignal.timeout(10000),
     });
@@ -280,7 +281,7 @@ async function getSafestRoutes(req, res) {
       signalCounts: { reports: reports.length, zones: zones.length },
       routes: rankedRoutes,
       disclaimer: "Route rankings use only available active community reports and lower-scored safety zones near each road option. These signals may be incomplete or illustrative and are not verified, live, or a guarantee of safety.",
-      attribution: "Routing by OSRM; map data © OpenStreetMap contributors.",
+      attribution: "Routing by OSRM. Geocoding and map data © OpenStreetMap contributors.",
     });
   } catch (error) {
     console.error("Safe route planning failed:", error.message);
