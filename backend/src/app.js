@@ -5,6 +5,7 @@ const authRoutes = require("./routes/auth.routes");
 const reportRoutes = require("./routes/report.routes");
 const zoneRoutes = require("./routes/zone.routes");
 const forumRoutes = require("./routes/forum.routes");
+const safeRouteRoutes = require("./routes/safeRoute.routes");
 
 const app = express();
 const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
@@ -33,6 +34,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/zones", zoneRoutes);
 app.use("/api/forum", forumRoutes);
+app.use("/api/routes", safeRouteRoutes);
 
 app.use((req, res) => res.status(404).json({ message: "Route not found" }));
 app.use((err, req, res, next) => {
