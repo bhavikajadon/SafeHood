@@ -275,6 +275,8 @@ async function getSafestRoutes(req, res) {
 
     return res.json({
       destination: destinationPoint.displayName,
+      originCoordinates: [longitude, latitude],
+      destinationCoordinates: [destinationPoint.longitude, destinationPoint.latitude],
       city: resolvedCity,
       routeCount: rankedRoutes.length,
       signalDataAvailable: reports.length > 0 || zones.length > 0,
